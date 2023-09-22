@@ -61,6 +61,14 @@ public class Jsons {
     }
   }
 
+  public static <T> String serializeExact(final T object) {
+    try {
+      return OBJECT_MAPPER_EXACT.writeValueAsString(object);
+    } catch (final JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   public static <T> T deserialize(final String jsonString, final Class<T> klass) {
     try {
       return OBJECT_MAPPER.readValue(jsonString, klass);
@@ -124,6 +132,14 @@ public class Jsons {
   public static Optional<JsonNode> tryDeserialize(final String jsonString) {
     try {
       return Optional.of(OBJECT_MAPPER.readTree(jsonString));
+    } catch (final Throwable e) {
+      return Optional.empty();
+    }
+  }
+
+  public static <T> Optional<T> tryDeserializeExact(final String jsonString, final Class<T> klass) {
+    try {
+      return Optional.of(OBJECT_MAPPER_EXACT.readValue(jsonString, klass));
     } catch (final Throwable e) {
       return Optional.empty();
     }

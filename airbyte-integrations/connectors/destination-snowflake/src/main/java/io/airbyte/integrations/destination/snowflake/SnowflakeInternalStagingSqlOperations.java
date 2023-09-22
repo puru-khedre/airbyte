@@ -81,6 +81,7 @@ public class SnowflakeInternalStagingSqlOperations extends SnowflakeSqlStagingOp
       try {
         uploadRecordsToBucket(database, stageName, stagingPath, recordsData);
         succeeded = true;
+        LOGGER.info("CYNTHIA DEBUG - SnowflakeInternalStagingSqlOperations.uploadRecordsToStage - recordsData " + recordsData);
       } catch (final Exception e) {
         LOGGER.error("Failed to upload records into stage {}", stagingPath, e);
         exceptionsThrown.add(e);
@@ -171,6 +172,7 @@ public class SnowflakeInternalStagingSqlOperations extends SnowflakeSqlStagingOp
       throws SQLException {
     try {
       final String query = getCopyQuery(stageName, stagingPath, stagedFiles, tableName, schemaName);
+      LOGGER.info("CYNTHIA DEBUG - SnowflakeInternalStagingSqlOperations copyIntoTableFromStage - query: " + query);
       LOGGER.debug("Executing query: {}", query);
       database.execute(query);
     } catch (final SQLException e) {

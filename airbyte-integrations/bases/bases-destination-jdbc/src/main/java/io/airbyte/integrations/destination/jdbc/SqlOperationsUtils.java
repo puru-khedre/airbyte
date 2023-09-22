@@ -16,8 +16,12 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SqlOperationsUtils {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(SqlOperationsUtils.class);
 
   /**
    * Inserts "raw" records in a single query. The purpose of helper to abstract away database-specific
@@ -71,6 +75,11 @@ public class SqlOperationsUtils {
       return;
     }
 
+    for (final AirbyteRecordMessage message : records) {
+      LOGGER.info("CYNTHIA DEBUG - SqlOperationsUtils insertRawRecordsInSingleQuery - Jsons.serialize(message.getData()) " + Jsons.serialize(message.getData()));
+      LOGGER.info("CYNTHIA DEBUG - SqlOperationsUtils insertRawRecordsInSingleQuery - Jsons.serializeExact(message.getData()) " + Jsons.serializeExact(message.getData()));
+    }
+
     jdbcDatabase.execute(connection -> {
 
       // Strategy: We want to use PreparedStatement because it handles binding values to the SQL query
@@ -83,7 +92,7 @@ public class SqlOperationsUtils {
       // how many records can be inserted at once
       // TODO(sherif) this should use a smarter, destination-aware partitioning scheme instead of 10k by
       // default
-      for (List<AirbyteRecordMessage> partition : Iterables.partition(records, 10_000)) {
+      for (final List<AirbyteRecordMessage> partition : Iterables.partition(records, 10_000)) {
         final StringBuilder sql = new StringBuilder(insertQueryComponent);
         partition.forEach(r -> sql.append(recordQueryComponent));
         final String s = sql.toString();
@@ -95,10 +104,15 @@ public class SqlOperationsUtils {
           for (final AirbyteRecordMessage message : partition) {
             // 1-indexed
             statement.setString(i, uuidSupplier.get().toString());
-            statement.setString(i + 1, Jsons.serialize(message.getData()));
+            statement.setString(i + 1, Jsons.serializeExact(message.getData()));
             statement.setTimestamp(i + 2, Timestamp.from(Instant.ofEpochMilli(message.getEmittedAt())));
             i += 3;
+            LOGGER.info("CYNTHIA DEBUG - SqlOperationsUtils insertRawRecordsInSingleQuery - message.getData() " + message.getData());
+            LOGGER.info("CYNTHIA DEBUG - SqlOperationsUtils insertRawRecordsInSingleQuery - Jsons.serialize " + Jsons.serialize(message.getData()));
+            LOGGER.info("CYNTHIA DEBUG - SqlOperationsUtils insertRawRecordsInSingleQuery - Jsons.serializeExact " + Jsons.serializeExact(message.getData()));
           }
+
+          LOGGER.info("CYNTHIA DEBUG - SqlOperationsUtils insertRawRecordsInSingleQuery - statement " + statement);
 
           statement.execute();
         }

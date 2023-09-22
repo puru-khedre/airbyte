@@ -134,13 +134,18 @@ public class AsyncStreamConsumer implements SerializedAirbyteMessageConsumer {
   public static PartialAirbyteMessage deserializeAirbyteMessage(final String messageString) {
     // TODO: (ryankfu) plumb in the serialized AirbyteStateMessage to match AirbyteRecordMessage code
     // parity. https://github.com/airbytehq/airbyte/issues/27530 for additional context
-    final var partial = Jsons.tryDeserialize(messageString, PartialAirbyteMessage.class)
+    final var partial = Jsons.tryDeserializeExact(messageString, PartialAirbyteMessage.class) // FIXME?
         .orElseThrow(() -> new RuntimeException("Unable to deserialize PartialAirbyteMessage."));
+    LOGGER.info("CYNTHIA DEBUG - async destination - AsyncStreamConsumer.deserializeAirbyteMessage");
+    LOGGER.info("CYNTHIA DEBUG - async destination - messageString: " + messageString);
+
 
     final var msgType = partial.getType();
     if (Type.RECORD.equals(msgType) && partial.getRecord().getData() != null) {
       // store serialized json
-      partial.withSerialized(partial.getRecord().getData().toString());
+      partial.withSerialized(partial.getRecord().getData().toString()); // FIXME: problem?
+      LOGGER.info("CYNTHIA DEBUG - async destination - partial: " + partial.getRecord().getData());
+      LOGGER.info("CYNTHIA DEBUG - async destination - partial2: " + partial.getSerialized());
       // The connector doesn't need to be able to access to the record value. We can serialize it here and
       // drop the json
       // object. Having this data stored as a string is slightly more optimal for the memory usage.

@@ -102,6 +102,7 @@ class SnowflakeSqlOperations extends JdbcSqlOperations implements SqlOperations 
         "INSERT INTO \"%s\".\"%s\" (\"%s\", \"%s\", \"%s\") SELECT column1, parse_json(column2), column3 FROM VALUES\n",
         schemaName, tableName, JavaBaseConstants.COLUMN_NAME_AB_RAW_ID, JavaBaseConstants.COLUMN_NAME_DATA,
         JavaBaseConstants.COLUMN_NAME_AB_EXTRACTED_AT);
+    LOGGER.info("CYNTHIA DEBUG - SnowflakeSqlOperations.insertRecordsInternal - insertQuery " + insertQuery);
     final String recordQuery = "(?, ?, ?),\n";
     SqlOperationsUtils.insertRawRecordsInSingleQuery(insertQuery, recordQuery, database, records);
   }

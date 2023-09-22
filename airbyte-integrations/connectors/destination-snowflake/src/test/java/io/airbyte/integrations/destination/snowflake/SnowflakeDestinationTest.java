@@ -32,6 +32,19 @@ public class SnowflakeDestinationTest {
     DestinationConfig.initialize(Jsons.emptyObject());
   }
 
+  @Test
+  public void cynthiaTest() {
+    final String s = "{ \"GA_User_Id__c\": 1884518522.1684267241}";
+    final JsonNode n = Jsons.jsonNode(s);
+    final String ser = Jsons.serialize(n);
+    final JsonNode deser = Jsons.deserialize(s);
+    final JsonNode deser2 = Jsons.deserializeExact(s);
+    System.out.println(n);
+    System.out.println(ser);
+    System.out.println(deser);
+    System.out.println(deser2);
+  }
+
   private static Stream<Arguments> urlsDataProvider() {
     return Stream.of(
         // See https://docs.snowflake.com/en/user-guide/admin-account-identifier for specific requirements

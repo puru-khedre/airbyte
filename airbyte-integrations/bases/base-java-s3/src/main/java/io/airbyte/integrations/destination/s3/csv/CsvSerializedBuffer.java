@@ -68,11 +68,13 @@ public class CsvSerializedBuffer extends BaseSerializedBuffer {
    */
   @Override
   protected void writeRecord(final AirbyteRecordMessage record) throws IOException {
+    LOGGER.info("CYNTHIA DEBUG - CsvSerializedBuffer writeRecord - record " + record);
     csvPrinter.printRecord(csvSheetGenerator.getDataRow(UUID.randomUUID(), record));
   }
 
   @Override
   protected void writeRecord(final String recordString, final long emittedAt) throws IOException {
+    LOGGER.info("CYNTHIA DEBUG - CsvSerializedBuffer writeRecord - record str " + recordString);
     csvPrinter.printRecord(csvSheetGenerator.getDataRow(UUID.randomUUID(), recordString, emittedAt));
   }
 

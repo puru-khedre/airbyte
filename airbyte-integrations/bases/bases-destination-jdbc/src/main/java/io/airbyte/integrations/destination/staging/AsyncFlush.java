@@ -86,6 +86,11 @@ class AsyncFlush implements DestinationFlushFunction {
           // we should either just pass the raw string or at least have a way to do that and create a default
           // impl that maintains backwards compatible behavior.
           writer.accept(record.getSerialized(), record.getRecord().getEmittedAt());
+          log.info("CYNTHIA DEBUG - AsyncFlush.flush - " + record);
+          log.info("CYNTHIA DEBUG - AsyncFlush.flush - " + record.getRecord());
+          log.info("CYNTHIA DEBUG - AsyncFlush.flush - " + record.getRecord().getStream());
+          log.info("CYNTHIA DEBUG - AsyncFlush.flush - " + record.getRecord().getData());
+          log.info("CYNTHIA DEBUG - AsyncFlush.flush - " + record.getSerialized());
         } catch (final Exception e) {
           throw new RuntimeException(e);
         }

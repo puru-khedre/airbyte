@@ -160,6 +160,12 @@ public class FlushWorkers implements AutoCloseable {
               batch.getData().size(),
               AirbyteFileUtils.byteCountToDisplaySize(batch.getSizeInBytes()));
 
+          for (MessageWithMeta m : batch.getData()) {
+            log.info("CYNTHIA DEBUG - FlushWorkers flush record - " + m.message().getRecord());
+            log.info("CYNTHIA DEBUG - FlushWorkers flush ser - " + m.message().getSerialized());
+            log.info("CYNTHIA DEBUG - FlushWorkers flush full - " + m.message());
+          }
+
           flusher.flush(desc, batch.getData().stream().map(MessageWithMeta::message));
           emitStateMessages(batch.flushStates(stateIdToCount));
         }
@@ -225,6 +231,11 @@ public class FlushWorkers implements AutoCloseable {
   }
 
   private void emitStateMessages(final List<PartialAirbyteMessage> partials) {
+    for (final PartialAirbyteMessage message : partials) {
+      log.info("CYNTHIA DEBUG - FlushWorkers emitStateMessages record - " + message.getRecord());
+      log.info("CYNTHIA DEBUG - FlushWorkers emitStateMessages ser - " + message.getSerialized());
+      log.info("CYNTHIA DEBUG - FlushWorkers emitStateMessages full - " + message);
+    }
     partials
         .stream()
         .map(partial -> Jsons.deserialize(partial.getSerialized(), AirbyteMessage.class))
